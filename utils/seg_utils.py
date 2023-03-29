@@ -2,9 +2,6 @@ from typing import Dict, Any
 from torchmetrics import Metric
 from scipy.optimize import linear_sum_assignment
 from utils.dist_utils import all_reduce_dict
-#
-# Authors: Wouter Van Gansbeke & Simon Vandenhende
-# Licensed under the CC BY-NC 4.0 license (https://creativecommons.org/licenses/by-nc/4.0/)
 
 import numpy as np
 import pydensecrf.densecrf as dcrf
