@@ -3,9 +3,9 @@
     "output_dir": "./output/",
     "checkpoint": "",
     "wandb": {
-        "project": "Unsupervised_segmentation",
-        "entity": "name",
-        "name": "stego_hp_ex00",
+        "project": "Project_name",
+        "entity": "your_ID",
+        "name": "experiment_name",
         "mode": "online"
     },
     "dataset": {
