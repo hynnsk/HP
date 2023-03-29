@@ -9,7 +9,21 @@ This is the official pytorch implementation of "Leveraging Hidden Positives for 
 
 
 ## Requirements
-We follow the environment of STEGO. Please check their [github](https://github.com/mhamilton723/STEGO/blob/master/environment.yml).
+Install following packages.
+```
+- python=3.6.9
+- pytorch==1.7.1
+- torchvision==0.8.2
+- torchaudio==0.7.2
+- cudatoolkit=11.0
+- pytorch-lightning
+- matplotlib>=3.3,<3.4
+- tqdm>=4.59,<4.60
+- scipy>=1.5,<1.6
+- hydra-core
+- seaborn
+- pydensecrf
+```
 
 ## Training & Evaluation
 You should modify the data path in "<path_to_HP>/json/server/cocostuff.json" according to your dataset path.
