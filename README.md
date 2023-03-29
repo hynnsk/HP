@@ -27,7 +27,7 @@ Install following packages.
 ```
 
 ## Prepare datasets
-Change the `pytorch_data_dir` variable in `dataset_download.py` according to your data directory where datasets are stored and run as:
+Change the `pytorch_data_dir` variable in `dataset_download.py` according to your data directory where datasets are stored and run:
 ```
 python ./dataset/dataset_download.py
 ```
