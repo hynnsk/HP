@@ -27,9 +27,9 @@ Install following packages.
 ```
 
 ## Prepare datasets
-Change the `pytorch_data_dir` variable according to your data directory where datasets are stored and run the code below:
+Change the `pytorch_data_dir` variable in `download_datasets.py` according to your data directory where datasets are stored and run as:
 ```
-python download_datasets.py
+python ./dataset/download_datasets.py
 ```
 Then, extract the zip files.
 
