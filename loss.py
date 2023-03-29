@@ -161,8 +161,6 @@ class LinearLoss(nn.Module):
 
 
 class SupConLoss(nn.Module):
-    """Supervised Contrastive Learning: https://arxiv.org/pdf/2004.11362.pdf.
-    It also supports the unsupervised contrastive loss in SimCLR"""
     def __init__(self, temperature=0.07, contrast_mode='one',
                  base_temperature=0.07):
         super(SupConLoss, self).__init__()
@@ -172,17 +170,6 @@ class SupConLoss(nn.Module):
 
     def forward(self, modeloutput_z, modeloutput_s_pr=None, modeloutput_f=None,
                 Pool_ag=None, Pool_sp=None, opt=None, lmbd=None, modeloutput_z_mix=None):
-        """Compute loss for model. If both `labels` and `mask` are None,
-        it degenerates to SimCLR unsupervised loss:
-        https://arxiv.org/pdf/2002.05709.pdf
-        Args:
-            features: hidden vector of shape [bsz, n_views, ...].
-            labels: ground truth of shape [bsz].
-            mask: contrastive mask of shape [bsz, bsz], mask_{i,j}=1 if sample j
-                has the same class as sample i. Can be asymmetric.
-        Returns:
-            A loss scalar.
-        """
         device = (torch.device('cuda')
                   if modeloutput_z.is_cuda
                   else torch.device('cpu'))
@@ -268,10 +255,10 @@ class SupConLoss(nn.Module):
                 nonzero_idx_ema = torch.where(mask_ema_one.sum(1) != 0.)
                 mask_ema_one = mask_ema_one[nonzero_idx_ema]
                 if opt["reweighting"] == 1:
-                    pnm = torch.tensor(torch.sum(mask_one, dim=1), dtype=torch.float32)  # mi
+                    pnm = torch.tensor(torch.sum(mask_one, dim=1), dtype=torch.float32)
                     pnm = (pnm / torch.sum(pnm))
                     pnm = pnm / torch.mean(pnm)
-                    pnm_ema = torch.tensor(torch.sum(mask_ema_one, dim=1), dtype=torch.float32)  # mi
+                    pnm_ema = torch.tensor(torch.sum(mask_ema_one, dim=1), dtype=torch.float32)
                     pnm_ema = (pnm_ema / torch.sum(pnm_ema))
                     pnm_ema = pnm_ema / torch.mean(pnm_ema)
                 else:
@@ -282,7 +269,7 @@ class SupConLoss(nn.Module):
                 mean_log_prob_pos_one_ema = (mask_ema_one * log_prob_one).sum(1) / (mask_ema_one.sum(1))
                 loss = loss - torch.mean((self.temperature / self.base_temperature) * mean_log_prob_pos_one_ema * pnm_ema) * lmbd
 
-            modeloutput_z_mix_one = modeloutput_z_mix[mi * split: (mi + 1) * split]  # mi,384
+            modeloutput_z_mix_one = modeloutput_z_mix[mi * split: (mi + 1) * split]
             with torch.cuda.amp.autocast(enabled=True):
                 anchor_dot_contrast_one_lhp = torch.div(
                     torch.matmul(modeloutput_z_mix_one, modeloutput_z_mix.T),
