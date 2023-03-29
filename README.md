@@ -7,7 +7,7 @@ This is the official pytorch implementation of "Leveraging Hidden Positives for 
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on-potsdam-1)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-potsdam-1?p=leveraging-hidden-positives-for-unsupervised)
 
-[[Arxiv]()] | [[Paper]()]
+[[Arxiv](https://arxiv.org/abs/2303.15014)] | [[Paper]()]
 
 ----------
 
