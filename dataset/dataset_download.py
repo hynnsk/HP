@@ -14,10 +14,10 @@ import os
 def my_app() -> None:
     pytorch_data_dir = "/data/Datasets"
     dataset_names = [
-        # "potsdam",
-        "cityscapes"]
-        # "cocostuff"]
-    # "potsdamraw"]
+        "potsdam",
+        "cityscapes",
+        "cocostuff",
+        "potsdamraw"]
     url_base = "https://marhamilresearch4.blob.core.windows.net/stego-public/pytorch_data/"
 
     os.makedirs(pytorch_data_dir, exist_ok=True)
