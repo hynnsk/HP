@@ -26,6 +26,13 @@ Install following packages.
 - pydensecrf
 ```
 
+## Prepare datasets
+Change the pytorch_data_dir variable according to your data directory where datasets are stored and run the code below:
+```
+python download_datasets.py
+```
+Then, extract the zip files.
+
 ## Training & Evaluation
 You should modify the data path in "<path_to_HP>/json/server/cocostuff.json" according to your dataset path.
 
