@@ -3,7 +3,7 @@ import argparse
 from functools import partial
 import torch
 import torch.nn as nn
-import torch.nn.functional as F  # noqa
+import torch.nn.functional as F
 from torch.backends import cudnn
 import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel
@@ -32,35 +32,11 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
     prefix = "{}/{}_{}".format(opt["output_dir"], opt["dataset"]["data_type"], opt["wandb"]["name"])
     opt["full_name"] = prefix
 
-    # # -------------------- Distributed Setup --------------------------#
-    # if (opt["num_gpus"] == 0) or (not torch.cuda.is_available()):
-    #     raise ValueError("Run requires at least 1 GPU.")
-
-    # if (opt["num_gpus"] > 1) and (not dist.is_initialized()):
-    #     assert dist.is_available()
-    #     dist.init_process_group(backend="nccl")  # nccl for NVIDIA GPUs
-    #     world_size = int(dist.get_world_size())
-    #     local_rank = int(dist.get_rank())
-    #     torch.cuda.set_device(local_rank)
-    #     print_fn = partial(dprint, local_rank=local_rank)  # only prints when local_rank == 0
-    #     is_distributed = True
-    # else:
-    #     world_size = 1
-    #     local_rank = 0
-    #     print_fn = print
-    #     is_distributed = False
-
     cudnn.benchmark = True
 
-    # is_master = (local_rank == 0)
     world_size=1
     local_rank = 0
     wandb_save_dir = set_wandb(opt, local_rank, force_mode="disabled" if (is_debug or is_test) else None)
-
-    # if not wandb_save_dir:
-    #     wandb_save_dir = os.path.join(opt["output_dir"], opt["wandb"]["name"])
-    # if is_test:
-    #     wandb_save_dir = "/".join(opt["checkpoint"].split("/")[:-1])
 
     train_dataset = build_dataset(opt["dataset"], mode="train", model_type=opt["model"]["pretrained"]["model_type"])
     train_loader_memory = build_dataloader(train_dataset, opt["dataloader"], shuffle=True)
@@ -96,7 +72,6 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
     criterion = criterion.to(device)
     supcon_criterion = SupConLoss(temperature=opt["tau"]).to(device)
     pd = nn.PairwiseDistance()
-    # cd = nn.CosineSimilarity()
 
     model = net_model
     model_m = model
@@ -118,11 +93,6 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
     start_epoch, current_iter = 0, 0
     best_metric, best_epoch, best_iter = 0, 0, 0
 
-    # ------------------- Scheduler -----------------------#
-    # if is_train:
-    #     num_accum = opt["train"]["num_accum"]
-    # else:
-    #     num_accum = 1
     num_accum = 1
 
     timer = Timer()
@@ -134,8 +104,8 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
 
     # ---------------------------- memory ---------------------------- #
     with torch.no_grad():
-        Pool_ag = torch.zeros((opt["model"]["pool_size"], feat_dim), dtype=torch.float16).cuda() # 4096, 384
-        Pool_sp = torch.zeros((opt["model"]["pool_size"], opt["model"]["dim"]), dtype=torch.float16).cuda() # 4096, 384
+        Pool_ag = torch.zeros((opt["model"]["pool_size"], feat_dim), dtype=torch.float16).cuda()
+        Pool_sp = torch.zeros((opt["model"]["pool_size"], opt["model"]["dim"]), dtype=torch.float16).cuda()
         Pool_iter = iter(train_loader_memory)
 
         for _iter in range(len(train_loader_memory)):
@@ -146,27 +116,27 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
                 break
             img = img.cuda()
             with torch.cuda.amp.autocast(enabled=True):
-                model_output = net_model(img)  # feats : (b, 384, 28, 28) codes : (b, 70, 28, 28)
+                model_output = net_model(img)
 
-                modeloutput_f = model_output[0].clone().detach() # b, 384, 28, 28
-                modeloutput_f = modeloutput_f.view(modeloutput_f.size(0), modeloutput_f.size(1), -1) # b, 384, 28*28
+                modeloutput_f = model_output[0].clone().detach()
+                modeloutput_f = modeloutput_f.view(modeloutput_f.size(0), modeloutput_f.size(1), -1)
 
-                modeloutput_s_pr = model_output[2].clone().detach()  # b, 70, 28, 28
-                modeloutput_s_pr = modeloutput_s_pr.view(modeloutput_s_pr.size(0), modeloutput_s_pr.size(1), -1)  # b, 70, 28*28
+                modeloutput_s_pr = model_output[2].clone().detach()
+                modeloutput_s_pr = modeloutput_s_pr.view(modeloutput_s_pr.size(0), modeloutput_s_pr.size(1), -1)
 
-            for _iter2 in range(modeloutput_f.size(0)): # b
+            for _iter2 in range(modeloutput_f.size(0)):
                 randidx = np.random.randint(0, model_output[0].size(-1) * model_output[0].size(-2))
                 Pool_ag[_iter * opt["dataloader"]["batch_size"] + _iter2] = modeloutput_f[_iter2][:,randidx]
 
-            for _iter2 in range(modeloutput_s_pr.size(0)): # b
+            for _iter2 in range(modeloutput_s_pr.size(0)):
                 randidx = np.random.randint(0, model_output[2].size(-1) * model_output[2].size(-2))
                 Pool_sp[_iter * opt["dataloader"]["batch_size"] + _iter2] = modeloutput_s_pr[_iter2][:,randidx]
 
             if _iter % 10 == 0:
                 print ("Filling Pool Memory [{} / {}]".format((_iter+1)*opt["dataloader"]["batch_size"], opt["model"]["pool_size"]))
 
-        Pool_ag = F.normalize(Pool_ag, dim=1) # 4096, 384
-        Pool_sp = F.normalize(Pool_sp, dim=1) # 4096, 70
+        Pool_ag = F.normalize(Pool_ag, dim=1)
+        Pool_sp = F.normalize(Pool_sp, dim=1)
 
     # --------------------------- Train --------------------------------#
     assert is_train
@@ -175,11 +145,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
     valid_freq = opt["train"]["valid_freq"]
     grad_norm = opt["train"]["grad_norm"]
     freeze_encoder_bn = opt["train"]["freeze_encoder_bn"]
-    freeze_all_bn = opt["train"]["freeze_all_bn"]  # epoch
-
-    # for m in net_model.modules():
-    #     if isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.SyncBatchNorm)):
-    #         m.momentum /= num_accum
+    freeze_all_bn = opt["train"]["freeze_all_bn"]
 
     best_valid_metrics = dict(Cluster_mIoU=0, Cluster_Accuracy=0, Linear_mIoU=0, Linear_Accuracy=0)
     train_stats = RunningAverage()
@@ -188,8 +154,6 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
         print(f"-------- [{current_epoch}/{max_epoch} (iters: {current_iter})]--------")
 
         g_norm = torch.zeros(1, dtype=torch.float32, device=device)
-        # if is_distributed:
-        #     train_loader.sampler.set_epoch(current_epoch)
 
         net_model.train()
         linear_model.train()
@@ -211,19 +175,19 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
             # newly initialize
             if i % 100 == 0 and i!= 0:
                 with torch.no_grad():
-                    Pool_sp = torch.zeros((opt["model"]["pool_size"], opt["model"]["dim"]), dtype=torch.float16).cuda()  # 4096, 384
+                    Pool_sp = torch.zeros((opt["model"]["pool_size"], opt["model"]["dim"]), dtype=torch.float16).cuda()
                     for _iter, data in enumerate(train_loader_memory):
                         if _iter >= opt["model"]["pool_size"] / opt["dataloader"]["batch_size"]:
                             break
                         img_net: torch.Tensor = data['img'].to(device, non_blocking=True)
 
                         with torch.cuda.amp.autocast(enabled=True):
-                            model_output = net_model(img_net)  # feats : (b, 384, 28, 28) codes : (b, 70, 28, 28)
+                            model_output = net_model(img_net)
 
-                            modeloutput_s_pr = model_output[2].clone().detach()  # b, 70, 28, 28
-                            modeloutput_s_pr = modeloutput_s_pr.view(modeloutput_s_pr.size(0), modeloutput_s_pr.size(1), -1)  # b, 70, 28*28
+                            modeloutput_s_pr = model_output[2].clone().detach()
+                            modeloutput_s_pr = modeloutput_s_pr.view(modeloutput_s_pr.size(0), modeloutput_s_pr.size(1), -1)
 
-                        for _iter2 in range(modeloutput_s_pr.size(0)):  # b
+                        for _iter2 in range(modeloutput_s_pr.size(0)):
                             randidx = np.random.randint(0, model_output[2].size(-1) * model_output[2].size(-2))
                             Pool_sp[_iter * opt["dataloader"]["batch_size"] + _iter2] = modeloutput_s_pr[_iter2][:, randidx]
 
@@ -231,7 +195,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
                             print("Filling Pool Memory [{} / {}]".format(
                                 (_iter + 1) * opt["dataloader"]["batch_size"], opt["model"]["pool_size"]))
 
-                    Pool_sp = F.normalize(Pool_sp, dim=1)  # 4096, 70
+                    Pool_sp = F.normalize(Pool_sp, dim=1)
 
             img: torch.Tensor = data['img'].to(device, non_blocking=True)
             label: torch.Tensor = data['label'].to(device, non_blocking=True)
@@ -246,7 +210,6 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
                 freeze_bn(net_model)
 
             batch_size = img.shape[0]
-            # if i % num_accum == 0:
             net_optimizer.zero_grad(set_to_none=True)
             linear_probe_optimizer.zero_grad(set_to_none=True)
             cluster_probe_optimizer.zero_grad(set_to_none=True)
@@ -255,8 +218,8 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
             model_input = (img, label)
 
             with torch.cuda.amp.autocast(enabled=True):
-                model_output = net_model(img, train=True)  # feats : (b, 384, 28, 28) codes : (b, 70, 28, 28)
-                model_output_aug = net_model(img_aug)  # feats : (b, 384, 28, 28) codes : (b, 70, 28, 28)
+                model_output = net_model(img, train=True)
+                model_output_aug = net_model(img_aug)
 
             modeloutput_f = model_output[0].clone().detach().permute(0, 2, 3, 1).reshape(-1, feat_dim)
             modeloutput_f = F.normalize(modeloutput_f, dim=1)
@@ -266,8 +229,8 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
             modeloutput_s_aug = model_output_aug[1].permute(0, 2, 3, 1).reshape(-1, opt["model"]["dim"])
 
             with torch.cuda.amp.autocast(enabled=True):
-                modeloutput_z = project_head(modeloutput_s)  # 25088, 70
-                modeloutput_z_aug = project_head(modeloutput_s_aug)  # 25088, 70
+                modeloutput_z = project_head(modeloutput_s)
+                modeloutput_z_aug = project_head(modeloutput_s_aug)
             modeloutput_z = F.normalize(modeloutput_z, dim=1)
             modeloutput_z_aug = F.normalize(modeloutput_z_aug, dim=1)
 
@@ -289,7 +252,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
             detached_code = torch.clone(model_output[1].detach())
             with torch.cuda.amp.autocast(enabled=True):
                 linear_output = linear_model(detached_code)
-                cluster_output = cluster_model(detached_code, None, is_direct=False)  # cluster_loss, cluster_probs
+                cluster_output = cluster_model(detached_code, None, is_direct=False)
 
                 loss, loss_dict, corr_dict = criterion(model_input=model_input,
                                                        model_output=model_output,
@@ -305,7 +268,6 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
 
             scaler.scale(loss).backward()
 
-            # if i % num_accum == (num_accum - 1):
             if freeze_encoder_bn:
                 zero_grad_bn(model_m)
             if 0 < freeze_all_bn <= current_epoch:
