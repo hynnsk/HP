@@ -12,14 +12,11 @@ This is the official pytorch implementation of "Leveraging Hidden Positives for 
 Install following packages.
 ```
 - python=3.6.9
-- pytorch==1.7.1
-- torchvision==0.8.2
-- torchaudio==0.7.2
-- cudatoolkit=11.0
+- pytorch
 - pytorch-lightning
-- matplotlib>=3.3,<3.4
-- tqdm>=4.59,<4.60
-- scipy>=1.5,<1.6
+- matplotlib
+- tqdm
+- scipy
 - hydra-core
 - seaborn
 - pydensecrf
