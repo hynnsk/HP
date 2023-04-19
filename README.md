@@ -58,8 +58,23 @@ Then run the evaluation code as below:
 python eval.py --opt ./json/server/cocostuff_eval.json
 ```
 
+Note that all of our experiments are tested on single A6000 GPU.
+
 ## Acknowledgement
 This repository is built based on [STEGO](https://github.com/mhamilton723/STEGO) repository.
 Thanks for the great work.
 
+## Licence
+Our codes are released under [MIT](https://opensource.org/licenses/MIT) license.
+
+## Citation
+If you find this project useful, please consider the following citation:
+```
+@article{seong2023leveraging,
+  title={Leveraging Hidden Positives for Unsupervised Semantic Segmentation},
+  author={Seong, Hyun Seok and Moon, WonJun and Lee, SuBeen and Heo, Jae-Pil},
+  journal={arXiv preprint arXiv:2303.15014},
+  year={2023}
+}
+```
 
