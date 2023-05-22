@@ -77,4 +77,12 @@ If you find this project useful, please consider the following citation:
   year={2023}
 }
 ```
-
+```
+@article{seong2023leveraging,
+  author    = {Seong, Hyun Seok and Moon, WonJun and Lee, SuBeen and Heo, Jae-Pil},
+  title     = {Leveraging Hidden Positives for Unsupervised Semantic Segmentation},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month     = {June},
+  year      = {2023},
+}
+```
