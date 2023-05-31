@@ -44,8 +44,9 @@ You should modify the data path in "<path_to_HP>/json/server/cocostuff.json" acc
 
 To train the model, run the code as below:
 ```train
-python run.py --opt ./json/server/cocostuff.json
+python run.py --opt ./json/server/cocostuff.json --debug
 ```
+If you wish to see the training progress through wandb, configure the wandb settings in the JSON file and remove --debug.
 
 To evaluate, you should modify the checkpoint path in "<path_to_HP>/json/server/cocostuff_eval.json" according to the saved checkpoint path:
 ```ckpt_path
@@ -55,7 +56,7 @@ To evaluate, you should modify the checkpoint path in "<path_to_HP>/json/server/
 
 Then run the evaluation code as below:
 ```
-python eval.py --opt ./json/server/cocostuff_eval.json
+python eval.py --opt ./json/server/cocostuff_eval.json --debug
 ```
 
 Note that all of our experiments are tested on single A6000 GPU.
