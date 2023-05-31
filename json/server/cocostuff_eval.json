@@ -12,7 +12,7 @@
         "data_type": "cocostuff27",
         "data_path": "/DATA/seg/cocostuff",
         "loader_crop_type" : "center",
-        "crop_type" : "five",
+        "crop_type" : "none",
         "crop_ratio": 0.5,
         "res" : 224,
         "num_neighbors" : 7
@@ -28,8 +28,10 @@
     "loss_version": 1,
     "reweighting": 1,
 
+    "renew_interval": 100,
+
     "model": {
-        "memory_size": 2048,
+        "pool_size": 2048,
         "ema_m": 0.99,
         "warmup": 1000,
         "spatial_size": 28,

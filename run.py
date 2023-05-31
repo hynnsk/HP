@@ -173,7 +173,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
                 lmbd = (trainingiter - opt["model"]["warmup"]) / (maxiter - opt["model"]["warmup"])
 
             # newly initialize
-            if i % 100 == 0 and i!= 0:
+            if i % opt["renew_interval"] == 0 and i!= 0:
                 with torch.no_grad():
                     Pool_sp = torch.zeros((opt["model"]["pool_size"], opt["model"]["dim"]), dtype=torch.float16).cuda()
                     for _iter, data in enumerate(train_loader_memory):
