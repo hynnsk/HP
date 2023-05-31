@@ -46,7 +46,7 @@ To train the model, run the code as below:
 ```train
 python run.py --opt ./json/server/cocostuff.json --debug
 ```
-If you wish to see the training progress through wandb, modify the wandb settings in the JSON file and leave out --DEBUG.
+If you wish to see the training progress through wandb, modify the wandb settings in the JSON file and leave out --debug.
 
 To evaluate, you should modify the checkpoint path in "<path_to_HP>/json/server/cocostuff_eval.json" according to the saved checkpoint path:
 ```ckpt_path
