@@ -50,7 +50,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
 
     val_dataset = build_dataset(opt["dataset"], mode="val", model_type=opt["model"]["pretrained"]["model_type"])
     val_loader = build_dataloader(val_dataset, opt["dataloader"], shuffle=False,
-                                  batch_size=32)
+                                  batch_size=16)
 
     # -------------------------- Define -------------------------------#
     net_model, linear_model, cluster_model = build_model(opt=opt["model"],
@@ -86,7 +86,7 @@ def run(opt: dict, is_test: bool = False, is_debug: bool = False):
             linear_params=linear_model.parameters(),
             cluster_params=cluster_model.parameters(),
             opt=opt["optimizer"],
-            model_type=opt["wandb"]["name"])
+            model_type=opt["model"]["name"])
     else:
         net_optimizer, linear_probe_optimizer, cluster_probe_optimizer = None, None, None
 
