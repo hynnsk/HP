@@ -61,6 +61,9 @@ python eval.py --opt ./json/server/cocostuff_eval.json --debug
 
 Note that all of our experiments are tested on single A6000 GPU.
 
+### Checkpoints
+We release trained model on COCO-stuff dataset with ViT-S/8 backbone at [checkpoint](https://drive.google.com/file/d/1ugF4s4yvLSCQH967BKjyYVFX5G4pRktP/view?usp=drive_link).
+
 ## Acknowledgement
 This repository is built based on [STEGO](https://github.com/mhamilton723/STEGO) repository.
 Thanks for the great work.
