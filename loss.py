@@ -188,14 +188,22 @@ class SupConLoss(nn.Module):
         mask_neglect_base = mask_neglect_base.cuda()
 
         loss = torch.tensor(0).to(device)
+
+        with torch.cuda.amp.autocast(enabled=True):
+            Rpoint = torch.matmul(modeloutput_f, Pool_ag.transpose(0, 1))
+            Rpoint_ema = torch.matmul(modeloutput_s_pr, Pool_sp.transpose(0, 1))
+
+        Rpoint = torch.max(Rpoint, dim=1).values
+        Rpoint_T = Rpoint.unsqueeze(-1).repeat(1, split)
+
+        Rpoint_ema = torch.max(Rpoint_ema, dim=1).values
+        Rpoint_ema_T = Rpoint_ema.unsqueeze(-1).repeat(1, split)
+
         for mi in range(mini_iters):
             modeloutput_f_one = modeloutput_f[mi*split : (mi+1)*split]
             with torch.cuda.amp.autocast(enabled=True):
                 output_cossim_one = torch.matmul(modeloutput_f_one, modeloutput_f.transpose(0, 1))
-                Rpoint = torch.matmul(modeloutput_f, Pool_ag.transpose(0, 1))
 
-            Rpoint = torch.max(Rpoint, dim=1).values
-            Rpoint_T = Rpoint.unsqueeze(-1).repeat(1, split)
             output_cossim_one_T = output_cossim_one.transpose(0, 1)
             mask_one_T = (Rpoint_T < output_cossim_one_T)
             mask_one_T = torch.tensor(mask_one_T.transpose(0, 1), dtype=torch.float16)
@@ -210,10 +218,7 @@ class SupConLoss(nn.Module):
             modeloutput_s_pr_one = modeloutput_s_pr[mi*split : (mi+1)*split]
             with torch.cuda.amp.autocast(enabled=True):
                 output_cossim_ema_one = torch.matmul(modeloutput_s_pr_one, modeloutput_s_pr.transpose(0, 1))
-                Rpoint_ema = torch.matmul(modeloutput_s_pr, Pool_sp.transpose(0, 1))
 
-            Rpoint_ema = torch.max(Rpoint_ema, dim=1).values
-            Rpoint_ema_T = Rpoint_ema.unsqueeze(-1).repeat(1, split)
             output_cossim_ema_one_T = output_cossim_ema_one.transpose(0, 1)
             mask_ema_one_T = (Rpoint_ema_T < output_cossim_ema_one_T)
             mask_ema_one_T = torch.tensor(mask_ema_one_T.transpose(0, 1), dtype=torch.float16)
@@ -239,7 +244,7 @@ class SupConLoss(nn.Module):
                 mask_one = mask_one[nonzero_idx]
                 log_prob_one = log_prob_one[nonzero_idx]
                 mask_ema_one = mask_ema_one[nonzero_idx]
-                weighted_mask = torch.tensor(mask_one.detach()) + torch.tensor(mask_ema_one).detach()*lmbd
+                weighted_mask = mask_one.detach() + mask_ema_one.detach()*lmbd
                 if opt["reweighting"] == 1:
                     pnm = torch.tensor(torch.sum(weighted_mask, dim=1), dtype=torch.float32)
                     pnm = (pnm / torch.sum(pnm))
@@ -266,7 +271,7 @@ class SupConLoss(nn.Module):
                     pnm_ema=1
                 mean_log_prob_pos_one = (mask_one * log_prob_one[nonzero_idx]).sum(1) / (mask_one.sum(1))
                 loss = loss - torch.mean((self.temperature / self.base_temperature) * mean_log_prob_pos_one * pnm)
-                mean_log_prob_pos_one_ema = (mask_ema_one * log_prob_one).sum(1) / (mask_ema_one.sum(1))
+                mean_log_prob_pos_one_ema = (mask_ema_one * log_prob_one[nonzero_idx_ema]).sum(1) / (mask_ema_one.sum(1))
                 loss = loss - torch.mean((self.temperature / self.base_temperature) * mean_log_prob_pos_one_ema * pnm_ema) * lmbd
 
             modeloutput_z_mix_one = modeloutput_z_mix[mi * split: (mi + 1) * split]

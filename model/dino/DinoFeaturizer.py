@@ -16,7 +16,7 @@ class DinoFeaturizer(nn.Module):
             patch_size=patch_size,
             num_classes=0)
         self.n_feats = 384
-        self.const = 28
+        self.sigma = 28
 
         for p in self.model.parameters():
             p.requires_grad = False
@@ -167,7 +167,7 @@ class DinoFeaturizer(nn.Module):
                 attn = torch.max(torch.min(attn, attn_max), attn_min)
 
                 attn = attn.softmax(dim=-1)
-                attn = attn*self.const
+                attn = attn*self.sigma
                 attn[attn < torch.mean(attn, dim=2, keepdim=True)] = 0.
 
             feat_h = img.shape[2] // self.patch_size
