@@ -3,6 +3,8 @@ Hyun Seok Seong</sup>, WonJun Moon</sup>, SuBeen Lee</sup>, Jae-Pil Heo</sup>
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on-potsdam-1)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-potsdam-1?p=leveraging-hidden-positives-for-unsupervised)
 <br/>
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on?p=leveraging-hidden-positives-for-unsupervised)
+<br/>
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on-coco-7)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-coco-7?p=leveraging-hidden-positives-for-unsupervised)
 
 [[Arxiv](https://arxiv.org/abs/2303.15014)] | [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Seong_Leveraging_Hidden_Positives_for_Unsupervised_Semantic_Segmentation_CVPR_2023_paper.pdf)]
@@ -63,12 +65,12 @@ To evaluate the ViT-B/8 model, modify "model_type" in the json file to "vit_base
 
 Note that all of our experiments are tested on single A6000 GPU.
 
-### Checkpoint
+### Checkpoints
 Dataset | Backbone | Model file
  -- | -- | --
-COCO-stuff | ViT-S/8 | [checkpoint](https://drive.google.com/file/d/1ugF4s4yvLSCQH967BKjyYVFX5G4pRktP/view?usp=drive_link).
-Cityscapes | ViT-S/8 | [checkpoint](https://drive.google.com/file/d/1v3kRhRwx3CPOXXgwxOnDKhfjnskrV4bg/view?usp=sharing).
-Cityscapes | ViT-B/8 | [checkpoint](https://drive.google.com/file/d/1rUQ-qcWw49_g-lp18URTiPdwuaU9lPHK/view?usp=sharing).
+COCO-stuff | ViT-S/8 | [checkpoint](https://drive.google.com/file/d/1ugF4s4yvLSCQH967BKjyYVFX5G4pRktP/view?usp=drive_link)
+Cityscapes | ViT-S/8 | [checkpoint](https://drive.google.com/file/d/1v3kRhRwx3CPOXXgwxOnDKhfjnskrV4bg/view?usp=sharing)
+Cityscapes | ViT-B/8 | [checkpoint](https://drive.google.com/file/d/1rUQ-qcWw49_g-lp18URTiPdwuaU9lPHK/view?usp=sharing)
 
 [//]: # (We release trained model on COCO-stuff dataset with ViT-S/8 backbone at [checkpoint]&#40;https://drive.google.com/file/d/1ugF4s4yvLSCQH967BKjyYVFX5G4pRktP/view?usp=drive_link&#41;.)
 
