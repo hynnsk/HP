@@ -1,11 +1,6 @@
 # Leveraging Hidden Positives for Unsupervised Semantic Segmentation (CVPR 2023)
 Hyun Seok Seong</sup>, WonJun Moon</sup>, SuBeen Lee</sup>, Jae-Pil Heo</sup>
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on-potsdam-1)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-potsdam-1?p=leveraging-hidden-positives-for-unsupervised)
-<br/>
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on?p=leveraging-hidden-positives-for-unsupervised)
-<br/>
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/leveraging-hidden-positives-for-unsupervised/unsupervised-semantic-segmentation-on-coco-7)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-coco-7?p=leveraging-hidden-positives-for-unsupervised)
 
 [[Arxiv](https://arxiv.org/abs/2303.15014)] | [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Seong_Leveraging_Hidden_Positives_for_Unsupervised_Semantic_Segmentation_CVPR_2023_paper.pdf)]
 
